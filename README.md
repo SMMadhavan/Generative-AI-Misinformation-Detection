@@ -29,7 +29,3 @@ The system aims to assist digital platforms and fact-checkers by providing risk 
 - src/
 - dashboard/
 - models/
-
-## Author
-SM Madhavan  
-
