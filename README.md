@@ -23,6 +23,9 @@ The system aims to assist digital platforms and fact-checkers by providing risk 
 - Streamlit / FastAPI
 - Data Visualization libraries
 
+## Preferred IDE
+- Visual Studio Code
+
 ## Repository Structure (Planned)
 - data/
 - notebooks/
