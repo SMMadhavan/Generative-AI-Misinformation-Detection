@@ -24,7 +24,7 @@ The system aims to assist digital platforms and fact-checkers by providing risk 
 - Data Visualization libraries
 
 ## Preferred IDE
-- Visual Studio Code
+- Visual Studio Code 
 
 ## Repository Structure (Planned)
 - data/
