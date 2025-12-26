@@ -24,7 +24,13 @@ The system aims to assist digital platforms and fact-checkers by providing risk 
 - Data Visualization libraries
 
 ## Preferred IDE
-- Visual Studio Code 
+- Visual Studio Code
+
+## Current Status
+- Baseline ML model implemented using TF-IDF and Logistic Regression
+- Explainable features extracted from model coefficients
+- Trend analysis performed on misinformation distribution
+
 
 ## Repository Structure (Planned)
 - data/
