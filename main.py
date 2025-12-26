@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-print("Working")
+print("Working Perfect")
 
 fake = pd.read_csv("data/Fake.csv")
 true = pd.read_csv("data/True.csv")
@@ -145,4 +145,5 @@ prediction = model.predict(sample_vec)
 probability = model.predict_proba(sample_vec)
 
 print("Prediction:", "Misinformation" if prediction[0] == 1 else "Authentic")
+
 print("Misinformation probability:", probability[0][1])
