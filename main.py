@@ -147,3 +147,5 @@ probability = model.predict_proba(sample_vec)
 print("Prediction:", "Misinformation" if prediction[0] == 1 else "Authentic")
 
 print("Misinformation probability:", probability[0][1])
+
+#Model Performs prototype fuctioality and is enhanced progressively
