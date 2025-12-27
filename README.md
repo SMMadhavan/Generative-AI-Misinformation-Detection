@@ -31,7 +31,6 @@ The system aims to assist digital platforms and fact-checkers by providing risk 
 - Explainable features extracted from model coefficients
 - Trend analysis performed on misinformation distribution
 
-
 ## Repository Structure (Planned)
 - data/
 - notebooks/
