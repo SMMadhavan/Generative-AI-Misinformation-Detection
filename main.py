@@ -116,3 +116,34 @@ if __name__ == "__main__":
 
     print(f"✅ Training samples: {len(X_train)}")
     print(f"✅ Testing samples: {len(X_test)}")
+
+#-----------------------------------
+
+# --- NEW: Memory-Safe Training Strategy ---
+    from sklearn.model_selection import train_test_split
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import PassiveAggressiveClassifier
+    from sklearn.metrics import accuracy_score
+
+    print("⚖️ Finalizing Training Dataset (50k rows for stability)...")
+    # 50,000 rows is a large, high-quality dataset that avoids MemoryErrors
+    df_sample = df.groupby('label').apply(lambda x: x.sample(n=25000, random_state=42)).reset_index(drop=True)
+
+    print(f"✂️ Splitting {len(df_sample)} rows...")
+    X_train, X_test, y_train, y_test = train_test_split(df_sample['text'], df_sample['label'], test_size=0.2, random_state=42)
+
+    print("🔢 Vectorizing (TF-IDF)...")
+    # We use 10,000 single words (unigrams) for maximum stability
+    tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, max_features=10000)
+    
+    tfidf_train = tfidf_vectorizer.fit_transform(X_train.astype(str)) 
+    tfidf_test = tfidf_vectorizer.transform(X_test.astype(str))
+
+    print("🧠 Training Passive Aggressive Classifier...")
+    pac = PassiveAggressiveClassifier(max_iter=50)
+    pac.fit(tfidf_train, y_train)
+
+    y_pred = pac.predict(tfidf_test)
+    score = accuracy_score(y_test, y_pred)
+
+    print(f"🎯 FINAL SUCCESS! Accuracy: {round(score*100, 2)}%")
