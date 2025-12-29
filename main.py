@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import re
+import string
 
 def load_and_merge():
     # 1. Load ISOT (True=1, Fake=0)
@@ -9,40 +11,46 @@ def load_and_merge():
     fake_df['label'] = 0
     isot = pd.concat([true_df, fake_df])[['text', 'label']]
 
-    # 2. Load WELFake (Assuming label 1=Real, 0=Fake)
+    # 2. Load WELFake
     welfake = pd.read_csv('data/WELFake_Dataset.csv')
     welfake = welfake.rename(columns={'label': 'label'})[['text', 'label']]
 
-    # 3. Load GenAI (Standardize to match)
+    # 3. Load GenAI
     genai = pd.read_csv('data/generative_ai_misinformation_dataset.csv')
-    # Rename their target column to 'label'
     genai = genai.rename(columns={'is_misinformation': 'label'})
-    # IMPORTANT: If GenAI uses 1 for 'Misinfo', flip it to 0 to match our 0=Fake standard
     genai['label'] = genai['label'].apply(lambda x: 0 if x == 1 else 1) 
     genai = genai[['text', 'label']]
 
-    # 4. The Final Merge
+    # 4. Final Merge
     master_df = pd.concat([isot, welfake, genai], ignore_index=True)
-    master_df = master_df.dropna() # Remove any empty rows
-    
+    master_df = master_df.dropna()
     print(f"✅ Success! Master Dataset created with {len(master_df)} rows.")
     return master_df
 
-if __name__ == "__main__":
-    df = load_and_merge()
-#---------------------------------------------------
-
-import re
-import string
-
 def clean_text(text):
-    text = str(text).lower() # Case standardization
-    text = re.sub(r'https?://\S+|www\.\S+', '', text) # Remove URLs
-    text = re.sub(r'<.*?>', '', text) # Remove HTML tags
-    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text) # Remove punctuation
-    text = re.sub(r'\n', '', text) # Remove newlines
-    text = re.sub(r'\w*\d\w*', '', text) # Remove words containing numbers
+    text = str(text).lower() 
+    text = re.sub(r'https?://\S+|www\.\S+', '', text) 
+    text = re.sub(r'<.*?>', '', text) 
+    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text) 
+    text = re.sub(r'\n', '', text) 
+    text = re.sub(r'\w*\d\w*', '', text) 
     return text
-print("Done 1")
-# Apply it to your data
-# df['text'] = df['text'].apply(clean_text)
+
+# --- STEP 2: RUN THE BOSS (Execution) AT THE VERY BOTTOM ---
+
+if __name__ == "__main__":
+    # 1. Run your merge function
+    df = load_and_merge()
+
+    # 2. Clean the text (This takes a few minutes for 117k rows!)
+    print("🧹 Cleaning 117,493 rows of text... please wait.")
+    df['text'] = df['text'].apply(clean_text)
+
+    # 3. Create a 'processed' folder inside 'data'
+    os.makedirs('data/processed', exist_ok=True)
+
+    # 4. Save your final 'Master' file
+    output_path = 'data/processed/master_cleaned.csv'
+    df.to_csv(output_path, index=False)
+
+    print(f"💾 DONE! Your clean dataset is saved at: {output_path}")
