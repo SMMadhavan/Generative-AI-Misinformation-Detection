@@ -54,3 +54,21 @@ if __name__ == "__main__":
     df.to_csv(output_path, index=False)
 
     print(f"💾 DONE! Your clean dataset is saved at: {output_path}")
+
+    #---------------------------------------------------------
+    # 5. Exploratory Data Analysis (EDA) - Class Distribution
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    print("📊 Generating Class Distribution Chart...")
+    plt.figure(figsize=(8, 6))
+    sns.countplot(x='label', data=df, palette='viridis')
+    plt.title('Distribution of Real (1) vs. Fake (0) News')
+    plt.xlabel('Label (0: Fake, 1: Real)')
+    plt.ylabel('Number of Articles')
+    
+    # Save the chart to your dashboard folder
+    os.makedirs('dashboard', exist_ok=True)
+    plt.savefig('dashboard/class_distribution.png')
+    print("📈 Chart saved to dashboard/class_distribution.png")
+    plt.show()
