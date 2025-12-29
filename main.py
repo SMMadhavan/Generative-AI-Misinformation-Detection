@@ -72,3 +72,39 @@ if __name__ == "__main__":
     plt.savefig('dashboard/class_distribution.png')
     print("📈 Chart saved to dashboard/class_distribution.png")
     plt.show()
+
+    #-----------------------------------------
+
+    from wordcloud import WordCloud
+
+    print("☁️ Generating Word Clouds (using a safe sample to avoid MemoryError)...")
+    
+    # We take a sample of 10,000 rows for each to save memory
+    fake_sample = df[df['label'] == 0].sample(n=min(10000, len(df[df['label'] == 0])))
+    real_sample = df[df['label'] == 1].sample(n=min(10000, len(df[df['label'] == 1])))
+
+    # Join the sampled text
+    fake_text = " ".join(fake_sample['text'].astype(str))
+    real_text = " ".join(real_sample['text'].astype(str))
+
+    # Create and save Fake News Word Cloud
+    wordcloud_fake = WordCloud(width=800, height=400, background_color='white', max_words=100).generate(fake_text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud_fake, interpolation='bilinear')
+    plt.axis('off')
+    plt.title('Common Words in Fake News (Sampled)')
+    plt.savefig('dashboard/wordcloud_fake.png')
+
+    # Create and save Real News Word Cloud
+    wordcloud_real = WordCloud(width=800, height=400, background_color='white', max_words=100).generate(real_text)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud_real, interpolation='bilinear')
+    plt.axis('off')
+    plt.title('Common Words in Real News (Sampled)')
+    plt.savefig('dashboard/wordcloud_real.png')
+    
+    # Clean up memory immediately
+    del fake_text, real_text, fake_sample, real_sample
+    
+    print("✨ Word clouds saved! Check your 'dashboard' folder.")
+    plt.show()
