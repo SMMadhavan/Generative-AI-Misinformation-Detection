@@ -30,3 +30,19 @@ def load_and_merge():
 
 if __name__ == "__main__":
     df = load_and_merge()
+#---------------------------------------------------
+
+import re
+import string
+
+def clean_text(text):
+    text = str(text).lower() # Case standardization
+    text = re.sub(r'https?://\S+|www\.\S+', '', text) # Remove URLs
+    text = re.sub(r'<.*?>', '', text) # Remove HTML tags
+    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text) # Remove punctuation
+    text = re.sub(r'\n', '', text) # Remove newlines
+    text = re.sub(r'\w*\d\w*', '', text) # Remove words containing numbers
+    return text
+print("Done 1")
+# Apply it to your data
+# df['text'] = df['text'].apply(clean_text)
