@@ -1,39 +1,33 @@
 # AI-Driven Generative-AI Misinformation Detection & Trend Analytics
 
-## Project Overview
+## 🚀 Project Overview
 This project focuses on detecting AI-generated misinformation using machine learning and natural language processing techniques. 
-It also analyzes temporal and source-based trends to understand how generative-AI-driven misinformation evolves over time.
+The system analyzes textual features to distinguish between human-written news and synthetic misinformation, providing analytical insights through data visualization.
 
-The system aims to assist digital platforms and fact-checkers by providing risk scores, feature explanations, and analytical insights.
+## ✅ Current Milestones Achieved
+- **Data Engineering:** Successfully merged and cleaned a massive dataset of **117,493 rows** from ISOT, WELFake, and GenAI sources.
+- **Exploratory Data Analysis (EDA):** - Confirmed a perfect **50/50 class balance** (~60k real vs. ~60k fake articles).
+    - Generated Word Clouds to visualize high-frequency terms in misinformation.
+- **Baseline Modeling:** - Implemented a **Passive Aggressive Classifier**.
+    - Established an initial baseline accuracy of **51.3%** using a memory-stable 50,000-row sample.
 
-## Key Objectives
-- Detect AI-generated misinformation using NLP and ML models
-- Analyze textual and metadata features contributing to misinformation
-- Visualize misinformation trends across time, sources, and content types
-- Provide explainable predictions through dashboards and APIs
+## 📊 Visual Dashboard
+The following insights are currently saved in the `/dashboard` folder:
+- `class_distribution.png`: Visual proof of dataset balance.
+- `wordcloud_fake.png`: Key vocabulary in fake news.
+- `wordcloud_real.png`: Key vocabulary in real news.
 
-## Project Status
-🚧 Initial setup phase  
-📌 Repository will be updated daily as development progresses
+## 🛠 Tech Stack
+- **Language:** Python
+- **Libraries:** Pandas, Scikit-learn, Matplotlib, Seaborn, WordCloud
+- **ML Model:** Passive Aggressive Classifier (Baseline)
 
-## Tech Stack (Planned)
-- Python
-- NLP (TF-IDF, Transformers)
-- Machine Learning / Deep Learning
-- Streamlit / FastAPI
-- Data Visualization libraries
+## 📁 Repository Structure
+- `data/processed/`: Master cleaned dataset.
+- `dashboard/`: Visual assets and charts.
+- `src/`: Source code for data processing.
+- `main.py`: Main execution script.
+- `venv/`: Virtual environment.
 
-## Preferred IDE
-- Visual Studio Code
-
-## Current Status
-- Baseline ML model implemented using TF-IDF and Logistic Regression
-- Explainable features extracted from model coefficients
-- Trend analysis performed on misinformation distribution
-
-## Repository Structure (Planned)
-- data/
-- notebooks/
-- src/
-- dashboard/
-- models/
+## 📌 Status: PAUSED
+The project is currently paused after establishing the data pipeline and baseline model. Next steps will involve **Hyperparameter Tuning** and **N-gram optimization** to increase model accuracy.
