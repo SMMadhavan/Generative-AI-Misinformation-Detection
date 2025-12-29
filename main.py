@@ -73,38 +73,46 @@ if __name__ == "__main__":
     print("📈 Chart saved to dashboard/class_distribution.png")
     plt.show()
 
-    #-----------------------------------------
+#-----------------------------------------
 
+# ... (Your previous code for cleaning and saving CSV)
+
+    # --- UPDATED WORD CLOUD SECTION (Memory Optimized) ---
     from wordcloud import WordCloud
+    from collections import Counter
 
-    print("☁️ Generating Word Clouds (using a safe sample to avoid MemoryError)...")
+    print("☁️ Generating Word Clouds (Optimized for Memory)...")
     
-    # We take a sample of 10,000 rows for each to save memory
-    fake_sample = df[df['label'] == 0].sample(n=min(10000, len(df[df['label'] == 0])))
-    real_sample = df[df['label'] == 1].sample(n=min(10000, len(df[df['label'] == 1])))
+    # 1. Take a safe sample (5,000 articles is plenty for a visual)
+    fake_sample = df[df['label'] == 0]['text'].sample(n=5000, random_state=42).astype(str)
+    real_sample = df[df['label'] == 1]['text'].sample(n=5000, random_state=42).astype(str)
 
-    # Join the sampled text
-    fake_text = " ".join(fake_sample['text'].astype(str))
-    real_text = " ".join(real_sample['text'].astype(str))
+    # 2. Function to generate cloud safely
+    def save_cloud(text_series, title, filename):
+        full_text = " ".join(text_series)
+        wc = WordCloud(width=800, height=400, background_color='white', max_words=50).generate(full_text)
+        
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wc, interpolation='bilinear')
+        plt.axis('off')
+        plt.title(title)
+        plt.savefig(f'dashboard/{filename}')
+        plt.close() # Frees memory
+        del full_text # Erases the big string
 
-    # Create and save Fake News Word Cloud
-    wordcloud_fake = WordCloud(width=800, height=400, background_color='white', max_words=100).generate(fake_text)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_fake, interpolation='bilinear')
-    plt.axis('off')
-    plt.title('Common Words in Fake News (Sampled)')
-    plt.savefig('dashboard/wordcloud_fake.png')
+    save_cloud(fake_sample, 'Common Words in Fake News', 'wordcloud_fake.png')
+    save_cloud(real_sample, 'Common Words in Real News', 'wordcloud_real.png')
 
-    # Create and save Real News Word Cloud
-    wordcloud_real = WordCloud(width=800, height=400, background_color='white', max_words=100).generate(real_text)
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud_real, interpolation='bilinear')
-    plt.axis('off')
-    plt.title('Common Words in Real News (Sampled)')
-    plt.savefig('dashboard/wordcloud_real.png')
-    
-    # Clean up memory immediately
-    del fake_text, real_text, fake_sample, real_sample
-    
-    print("✨ Word clouds saved! Check your 'dashboard' folder.")
-    plt.show()
+    print("✨ Word clouds saved successfully!")
+
+    # --- KEEP YOUR SPLITTING CODE BELOW THIS ---
+    from sklearn.model_selection import train_test_split
+
+    print("✂️ Splitting data into Training (80%) and Testing (20%) sets...")
+    X = df['text']
+    y = df['label']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    print(f"✅ Training samples: {len(X_train)}")
+    print(f"✅ Testing samples: {len(X_test)}")
