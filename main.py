@@ -2,6 +2,18 @@ import pandas as pd
 import os
 import re
 import string
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from wordcloud import WordCloud
+from collections import Counter
+from scipy.sparse import hstack
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import PassiveAggressiveClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# --- STEP 1: DATA LOADING & CLEANING ---
 
 def load_and_merge():
     # 1. Load ISOT (True=1, Fake=0)
@@ -36,114 +48,93 @@ def clean_text(text):
     text = re.sub(r'\w*\d\w*', '', text) 
     return text
 
-# --- STEP 2: RUN THE BOSS (Execution) AT THE VERY BOTTOM ---
+# --- STEP 2: CUSTOM AI SIGNATURE FUNCTION ---
+
+def get_features(text):
+    """Extracts structural patterns that often distinguish AI from humans."""
+    text = str(text).strip()
+    if not text:
+        return [0, 0]
+        
+    sentences = [s for s in text.split('.') if s.strip()]
+    if not sentences:
+        return [0, 0]
+        
+    # Average Sentence Length (AI is often very consistent)
+    avg_sent_len = np.mean([len(s.split()) for s in sentences])
+    # Punctuation Density (AI uses punctuation very predictably)
+    punc_count = sum([1 for char in text if char in '?!,;:']) / (len(text) + 1)
+    
+    return [avg_sent_len, punc_count]
+
+# --- STEP 3: MAIN EXECUTION ---
 
 if __name__ == "__main__":
-    # 1. Run your merge function
+    # 1. Load and Clean
     df = load_and_merge()
-
-    # 2. Clean the text (This takes a few minutes for 117k rows!)
-    print("🧹 Cleaning 117,493 rows of text... please wait.")
+    print("🧹 Cleaning text... please wait.")
     df['text'] = df['text'].apply(clean_text)
 
-    # 3. Create a 'processed' folder inside 'data'
+    # 2. Save Cleaned Data
     os.makedirs('data/processed', exist_ok=True)
-
-    # 4. Save your final 'Master' file
     output_path = 'data/processed/master_cleaned.csv'
     df.to_csv(output_path, index=False)
+    print(f"💾 DONE! Dataset saved at: {output_path}")
 
-    print(f"💾 DONE! Your clean dataset is saved at: {output_path}")
-
-    #---------------------------------------------------------
-    # 5. Exploratory Data Analysis (EDA) - Class Distribution
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-
+    # 3. Visualization: Class Distribution
     print("📊 Generating Class Distribution Chart...")
     plt.figure(figsize=(8, 6))
     sns.countplot(x='label', data=df, palette='viridis')
     plt.title('Distribution of Real (1) vs. Fake (0) News')
-    plt.xlabel('Label (0: Fake, 1: Real)')
-    plt.ylabel('Number of Articles')
-    
-    # Save the chart to your dashboard folder
     os.makedirs('dashboard', exist_ok=True)
     plt.savefig('dashboard/class_distribution.png')
-    print("📈 Chart saved to dashboard/class_distribution.png")
-    plt.show()
+    plt.close()
 
-#-----------------------------------------
-
-# ... (Your previous code for cleaning and saving CSV)
-
-    # --- UPDATED WORD CLOUD SECTION (Memory Optimized) ---
-    from wordcloud import WordCloud
-    from collections import Counter
-
-    print("☁️ Generating Word Clouds (Optimized for Memory)...")
-    
-    # 1. Take a safe sample (5,000 articles is plenty for a visual)
+    # 4. Visualization: Word Clouds
+    print("☁️ Generating Word Clouds...")
     fake_sample = df[df['label'] == 0]['text'].sample(n=5000, random_state=42).astype(str)
     real_sample = df[df['label'] == 1]['text'].sample(n=5000, random_state=42).astype(str)
 
-    # 2. Function to generate cloud safely
     def save_cloud(text_series, title, filename):
         full_text = " ".join(text_series)
         wc = WordCloud(width=800, height=400, background_color='white', max_words=50).generate(full_text)
-        
         plt.figure(figsize=(10, 5))
         plt.imshow(wc, interpolation='bilinear')
         plt.axis('off')
         plt.title(title)
         plt.savefig(f'dashboard/{filename}')
-        plt.close() # Frees memory
-        del full_text # Erases the big string
+        plt.close()
 
     save_cloud(fake_sample, 'Common Words in Fake News', 'wordcloud_fake.png')
     save_cloud(real_sample, 'Common Words in Real News', 'wordcloud_real.png')
 
-    print("✨ Word clouds saved successfully!")
+    # 5. Machine Learning Setup (Balanced 30k Sample)
+    print("⚖️ Balancing Dataset for Training...")
+    df_sample = df.groupby('label').apply(lambda x: x.sample(n=15000, random_state=42)).reset_index(drop=True)
 
-    # --- KEEP YOUR SPLITTING CODE BELOW THIS ---
-    from sklearn.model_selection import train_test_split
+    print("📏 Extracting AI Signatures...")
+    custom_features = np.array([get_features(t) for t in df_sample['text']])
 
-    print("✂️ Splitting data into Training (80%) and Testing (20%) sets...")
-    X = df['text']
-    y = df['label']
+    print("✂️ Splitting data...")
+    X_train_text, X_test_text, y_train, y_test, X_train_custom, X_test_custom = train_test_split(
+        df_sample['text'], df_sample['label'], custom_features, test_size=0.2, random_state=42
+    )
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # 6. Vectorization & Model Training
+    print("🔢 Vectorizing Text & Combining Features...")
+    tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+    X_train_tfidf = tfidf.fit_transform(X_train_text.astype(str))
+    X_test_tfidf = tfidf.transform(X_test_text.astype(str))
 
-    print(f"✅ Training samples: {len(X_train)}")
-    print(f"✅ Testing samples: {len(X_test)}")
-
-#-----------------------------------
-
-# --- NEW: Memory-Safe Training Strategy ---
-    from sklearn.model_selection import train_test_split
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.linear_model import PassiveAggressiveClassifier
-    from sklearn.metrics import accuracy_score
-
-    print("⚖️ Finalizing Training Dataset (50k rows for stability)...")
-    # 50,000 rows is a large, high-quality dataset that avoids MemoryErrors
-    df_sample = df.groupby('label').apply(lambda x: x.sample(n=25000, random_state=42)).reset_index(drop=True)
-
-    print(f"✂️ Splitting {len(df_sample)} rows...")
-    X_train, X_test, y_train, y_test = train_test_split(df_sample['text'], df_sample['label'], test_size=0.2, random_state=42)
-
-    print("🔢 Vectorizing (TF-IDF)...")
-    # We use 10,000 single words (unigrams) for maximum stability
-    tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, max_features=10000)
-    
-    tfidf_train = tfidf_vectorizer.fit_transform(X_train.astype(str)) 
-    tfidf_test = tfidf_vectorizer.transform(X_test.astype(str))
+    # Join the TF-IDF word math with our Custom AI Signatures
+    X_train_final = hstack([X_train_tfidf, X_train_custom])
+    X_test_final = hstack([X_test_tfidf, X_test_custom])
 
     print("🧠 Training Passive Aggressive Classifier...")
-    pac = PassiveAggressiveClassifier(max_iter=50)
-    pac.fit(tfidf_train, y_train)
+    pac = PassiveAggressiveClassifier(max_iter=1000, tol=1e-3, random_state=42)
+    pac.fit(X_train_final, y_train)
 
-    y_pred = pac.predict(tfidf_test)
+    # 7. Final Results
+    y_pred = pac.predict(X_test_final)
     score = accuracy_score(y_test, y_pred)
-
-    print(f"🎯 FINAL SUCCESS! Accuracy: {round(score*100, 2)}%")
+    print(f"🎯 FINAL SUCCESS! ENHANCED ACCURACY: {round(score*100, 2)}%")
