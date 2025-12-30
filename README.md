@@ -30,4 +30,4 @@ The following insights are currently saved in the `/dashboard` folder:
 - `venv/`: Virtual environment.
 
 ## 📌 Status: PAUSED
-The project is currently paused after establishing the data pipeline and baseline model.Improving the model prediction accuracy is currently being focused on and the Next steps will involve **Hyperparameter Tuning** and **N-gram optimization** to increase model accuracy.
+The project is currently paused after establishing the data pipeline and baseline model. Improving the model prediction accuracy is currently being focused on and the Next steps will involve **Hyperparameter Tuning** and **N-gram optimization** to increase model accuracy.
