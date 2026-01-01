@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     # 6. Vectorization & Model Training
     print("🔢 Vectorizing Text & Combining Features...")
-    tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+    tfidf = TfidfVectorizer(stop_words='english', max_features=10000, ngram_range=(1,2))
     X_train_tfidf = tfidf.fit_transform(X_train_text.astype(str))
     X_test_tfidf = tfidf.transform(X_test_text.astype(str))
 
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     X_test_final = hstack([X_test_tfidf, X_test_custom])
 
     print("🧠 Training Passive Aggressive Classifier...")
-    pac = PassiveAggressiveClassifier(max_iter=1000, tol=1e-3, random_state=42)
+    pac = PassiveAggressiveClassifier(max_iter=1000, tol=1e-3, C=0.1, random_state=42)
     pac.fit(X_train_final, y_train)
 
     # 7. Final Results
