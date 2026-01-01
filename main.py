@@ -51,21 +51,27 @@ def clean_text(text):
 # --- STEP 2: CUSTOM AI SIGNATURE FUNCTION ---
 
 def get_features(text):
-    """Extracts structural patterns that often distinguish AI from humans."""
-    text = str(text).strip()
+    """Upgraded: Detects structural patterns and AI-preferred vocabulary."""
+    text = str(text).lower().strip()
     if not text:
-        return [0, 0]
+        return [0, 0, 0]
         
     sentences = [s for s in text.split('.') if s.strip()]
     if not sentences:
-        return [0, 0]
+        return [0, 0, 0]
         
-    # Average Sentence Length (AI is often very consistent)
+    # 1. Structural Signal: Average Sentence Length
     avg_sent_len = np.mean([len(s.split()) for s in sentences])
-    # Punctuation Density (AI uses punctuation very predictably)
+    
+    # 2. Complexity Signal: Punctuation Density
     punc_count = sum([1 for char in text if char in '?!,;:']) / (len(text) + 1)
     
-    return [avg_sent_len, punc_count]
+    # 3. Vocabulary Signal: AI Buzzword Count
+    # These are words LLMs use with statistically high frequency
+    ai_buzzwords = ['delve', 'pivotal', 'comprehensive', 'resonate', 'paving', 'unravel', 'vibrant', 'transformative']
+    buzzword_count = sum([1 for word in ai_buzzwords if word in text])
+    
+    return [avg_sent_len, punc_count, buzzword_count]
 
 # --- STEP 3: MAIN EXECUTION ---
 
