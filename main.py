@@ -1,146 +1,95 @@
 import pandas as pd
-import os
-import re
-import string
 import numpy as np
+import os
+import joblib
 import matplotlib.pyplot as plt
-import seaborn as sns
-from wordcloud import WordCloud
-from collections import Counter
-from scipy.sparse import hstack
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import PassiveAggressiveClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from scipy.sparse import hstack
 
-# --- STEP 1: DATA LOADING & CLEANING ---
+# --- 1. SENSES: Advanced AI Fingerprinting ---
+def get_advanced_features(text):
+    text = str(text).lower()
+    words = text.split()
+    if len(words) == 0: return [0, 0, 0]
+    
+    sentences = text.split('.')
+    sent_lengths = [len(s.split()) for s in sentences if len(s.split()) > 0]
+    uniformity = np.std(sent_lengths) if len(sent_lengths) > 1 else 0 # AI writes very consistently
+    
+    richness = len(set(words)) / len(words) # Humans use more diverse words
+    
+    buzzwords = ['pivotal', 'delve', 'comprehensive', 'resonate', 'paving', 'unravel']
+    buzz_density = sum([1 for w in buzzwords if w in text]) / len(words)
+    
+    return [uniformity, richness, buzz_density]
 
+# --- 2. THE ENGINE: Data Loading ---
 def load_and_merge():
-    # 1. Load ISOT (True=1, Fake=0)
+    print("📂 Loading datasets...")
     true_df = pd.read_csv('data/True.csv')
     fake_df = pd.read_csv('data/Fake.csv')
     true_df['label'] = 1
     fake_df['label'] = 0
     isot = pd.concat([true_df, fake_df])[['text', 'label']]
-
-    # 2. Load WELFake
+    
     welfake = pd.read_csv('data/WELFake_Dataset.csv')
     welfake = welfake.rename(columns={'label': 'label'})[['text', 'label']]
-
-    # 3. Load GenAI
+    
     genai = pd.read_csv('data/generative_ai_misinformation_dataset.csv')
     genai = genai.rename(columns={'is_misinformation': 'label'})
     genai['label'] = genai['label'].apply(lambda x: 0 if x == 1 else 1) 
     genai = genai[['text', 'label']]
-
-    # 4. Final Merge
-    master_df = pd.concat([isot, welfake, genai], ignore_index=True)
-    master_df = master_df.dropna()
-    print(f"✅ Success! Master Dataset created with {len(master_df)} rows.")
-    return master_df
-
-def clean_text(text):
-    text = str(text).lower() 
-    text = re.sub(r'https?://\S+|www\.\S+', '', text) 
-    text = re.sub(r'<.*?>', '', text) 
-    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text) 
-    text = re.sub(r'\n', '', text) 
-    text = re.sub(r'\w*\d\w*', '', text) 
-    return text
-
-# --- STEP 2: CUSTOM AI SIGNATURE FUNCTION ---
-
-def get_features(text):
-    """Upgraded: Detects structural patterns and AI-preferred vocabulary."""
-    text = str(text).lower().strip()
-    if not text:
-        return [0, 0, 0]
-        
-    sentences = [s for s in text.split('.') if s.strip()]
-    if not sentences:
-        return [0, 0, 0]
-        
-    # 1. Structural Signal: Average Sentence Length
-    avg_sent_len = np.mean([len(s.split()) for s in sentences])
     
-    # 2. Complexity Signal: Punctuation Density
-    punc_count = sum([1 for char in text if char in '?!,;:']) / (len(text) + 1)
-    
-    # 3. Vocabulary Signal: AI Buzzword Count
-    # These are words LLMs use with statistically high frequency
-    ai_buzzwords = ['delve', 'pivotal', 'comprehensive', 'resonate', 'paving', 'unravel', 'vibrant', 'transformative']
-    buzzword_count = sum([1 for word in ai_buzzwords if word in text])
-    
-    return [avg_sent_len, punc_count, buzzword_count]
-
-# --- STEP 3: MAIN EXECUTION ---
+    return pd.concat([isot, welfake, genai], ignore_index=True).dropna()
 
 if __name__ == "__main__":
-    # 1. Load and Clean
-    df = load_and_merge()
-    print("🧹 Cleaning text... please wait.")
-    df['text'] = df['text'].apply(clean_text)
+    df = load_and_merge() # This defines 'df' so you don't get a NameError anymore!
+    
+    print("⚖️ Balancing the Scales (Strict Stratified Sampling)...")
+    # We take exactly 5,000 from each group to ensure 0 bias
+    df_sample = df.groupby('label').apply(lambda x: x.sample(n=5000, random_state=42)).reset_index(drop=True)
 
-    # 2. Save Cleaned Data
-    os.makedirs('data/processed', exist_ok=True)
-    output_path = 'data/processed/master_cleaned.csv'
-    df.to_csv(output_path, index=False)
-    print(f"💾 DONE! Dataset saved at: {output_path}")
+    print("📏 Extracting Advanced AI Fingerprints...")
+    custom_features = np.array([get_advanced_features(t) for t in df_sample['text']])
 
-    # 3. Visualization: Class Distribution
-    print("📊 Generating Class Distribution Chart...")
-    plt.figure(figsize=(8, 6))
-    sns.countplot(x='label', data=df, palette='viridis')
-    plt.title('Distribution of Real (1) vs. Fake (0) News')
-    os.makedirs('dashboard', exist_ok=True)
-    plt.savefig('dashboard/class_distribution.png')
-    plt.close()
+    print("🔢 Vectorizing (Increasing Vocabulary Memory)...")
+    # Increasing to 8,000 features to capture more 'AI-specific' word pairs
+    tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
+    X_text = tfidf.fit_transform(df_sample['text'].astype(str))
+    X_final = hstack([X_text, custom_features])
 
-    # 4. Visualization: Word Clouds
-    print("☁️ Generating Word Clouds...")
-    fake_sample = df[df['label'] == 0]['text'].sample(n=5000, random_state=42).astype(str)
-    real_sample = df[df['label'] == 1]['text'].sample(n=5000, random_state=42).astype(str)
-
-    def save_cloud(text_series, title, filename):
-        full_text = " ".join(text_series)
-        wc = WordCloud(width=800, height=400, background_color='white', max_words=50).generate(full_text)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wc, interpolation='bilinear')
-        plt.axis('off')
-        plt.title(title)
-        plt.savefig(f'dashboard/{filename}')
-        plt.close()
-
-    save_cloud(fake_sample, 'Common Words in Fake News', 'wordcloud_fake.png')
-    save_cloud(real_sample, 'Common Words in Real News', 'wordcloud_real.png')
-
-    # 5. Machine Learning Setup (Balanced 30k Sample)
-    print("⚖️ Balancing Dataset for Training...")
-    df_sample = df.groupby('label').apply(lambda x: x.sample(n=15000, random_state=42)).reset_index(drop=True)
-
-    print("📏 Extracting AI Signatures...")
-    custom_features = np.array([get_features(t) for t in df_sample['text']])
-
-    print("✂️ Splitting data...")
-    X_train_text, X_test_text, y_train, y_test, X_train_custom, X_test_custom = train_test_split(
-        df_sample['text'], df_sample['label'], custom_features, test_size=0.2, random_state=42
+    # Stratify=y ensures the 80/20 split keeps the 50/50 balance of labels
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_final, df_sample['label'], test_size=0.2, random_state=42, stratify=df_sample['label']
     )
 
-    # 6. Vectorization & Model Training
-    print("🔢 Vectorizing Text & Combining Features...")
-    tfidf = TfidfVectorizer(stop_words='english', max_features=10000, ngram_range=(1,2))
-    X_train_tfidf = tfidf.fit_transform(X_train_text.astype(str))
-    X_test_tfidf = tfidf.transform(X_test_text.astype(str))
+    print("🌲 Training Final Random Forest (The 60% Push)...")
+    # n_estimators=200: Adding more voters to the committee for a more stable result
+    rf_model = RandomForestClassifier(
+        n_estimators=200, 
+        max_depth=35, 
+        min_samples_split=4,
+        random_state=42, 
+        n_jobs=-1
+    )
+    rf_model.fit(X_train, y_train)
 
-    # Join the TF-IDF word math with our Custom AI Signatures
-    X_train_final = hstack([X_train_tfidf, X_train_custom])
-    X_test_final = hstack([X_test_tfidf, X_test_custom])
-
-    print("🧠 Training Passive Aggressive Classifier...")
-    pac = PassiveAggressiveClassifier(max_iter=1000, tol=1e-3, C=0.1, random_state=42)
-    pac.fit(X_train_final, y_train)
-
-    # 7. Final Results
-    y_pred = pac.predict(X_test_final)
+    # Final Accuracy Check
+    y_pred = rf_model.predict(X_test)
     score = accuracy_score(y_test, y_pred)
-    print(f"🎯 FINAL SUCCESS! ENHANCED ACCURACY: {round(score*100, 2)}%")
+    print(f"🎯 FINAL TARGET ACCURACY: {round(score*100, 2)}%")
+
+    # --- 3. DIAGNOSTICS: The Confusion Matrix ---
+    print("📊 Generating Confusion Matrix...")
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Fake/AI', 'Real'])
+    disp.plot(cmap=plt.cm.Blues)
+    plt.show() # This is your "X-ray" to see which news is tricking the AI
+
+    if not os.path.exists('models'): os.makedirs('models')
+    joblib.dump(rf_model, 'models/misinfo_detector_model.joblib', compress=3)
+    joblib.dump(tfidf, 'models/tfidf_vectorizer.joblib', compress=3)
+    print("🎉 Upgraded model saved and ready!")
