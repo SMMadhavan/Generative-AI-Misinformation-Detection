@@ -13,18 +13,24 @@ from scipy.sparse import hstack
 def get_advanced_features(text):
     text = str(text).lower()
     words = text.split()
-    if len(words) == 0: return [0, 0, 0]
+    if len(words) == 0: return [0, 0, 0, 0, 0]
     
-    sentences = text.split('.')
-    sent_lengths = [len(s.split()) for s in sentences if len(s.split()) > 0]
-    uniformity = np.std(sent_lengths) if len(sent_lengths) > 1 else 0 # AI writes very consistently
+    sentences = [s for s in text.split('.') if s.strip()]
+    sent_lengths = [len(s.split()) for s in sentences]
     
-    richness = len(set(words)) / len(words) # Humans use more diverse words
+    uniformity = np.std(sent_lengths) if len(sent_lengths) > 1 else 0
+    richness = len(set(words)) / len(words)
     
-    buzzwords = ['pivotal', 'delve', 'comprehensive', 'resonate', 'paving', 'unravel']
+    buzzwords = ['pivotal', 'delve', 'comprehensive', 'resonate', 'unravel', 'provisionally']
     buzz_density = sum([1 for w in buzzwords if w in text]) / len(words)
     
-    return [uniformity, richness, buzz_density]
+    burstiness = np.var(sent_lengths) if len(sent_lengths) > 1 else 0
+    
+    # NEW SENSE: Complexity Ratio (Long words vs. Short words)
+    long_words = sum([1 for w in words if len(w) > 7])
+    complexity_ratio = long_words / len(words)
+        
+    return [uniformity, richness, buzz_density, burstiness, complexity_ratio]
 
 # --- 2. THE ENGINE: Data Loading ---
 def load_and_merge():
@@ -66,21 +72,23 @@ if __name__ == "__main__":
         X_final, df_sample['label'], test_size=0.2, random_state=42, stratify=df_sample['label']
     )
 
-    print("🌲 Training Final Random Forest (The 60% Push)...")
-    # n_estimators=200: Adding more voters to the committee for a more stable result
+    print("🌲 Training Elite Random Forest (The Final 60% Push)...")
+    # n_estimators=250: More trees to 'average out' the noise
+    # min_samples_leaf=2: Prevents trees from memorizing single 'noisy' articles
     rf_model = RandomForestClassifier(
-        n_estimators=200, 
-        max_depth=35, 
-        min_samples_split=4,
+        n_estimators=250, 
+        max_depth=40,        # Giving it even more room to think
+        min_samples_leaf=2,   # Stabilization tweak
         random_state=42, 
         n_jobs=-1
     )
+    
     rf_model.fit(X_train, y_train)
 
-    # Final Accuracy Check
+    # Final Result
     y_pred = rf_model.predict(X_test)
     score = accuracy_score(y_test, y_pred)
-    print(f"🎯 FINAL TARGET ACCURACY: {round(score*100, 2)}%")
+    print(f"🎯 FINAL TUNED ACCURACY: {round(score*100, 2)}%")
 
     # --- 3. DIAGNOSTICS: The Confusion Matrix ---
     print("📊 Generating Confusion Matrix...")
