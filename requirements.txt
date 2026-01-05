@@ -1,0 +1,13 @@
+# --- Project Foundation ---
+pandas
+numpy
+scikit-learn
+joblib
+
+# --- Visualization & Reports ---
+matplotlib
+seaborn
+
+# --- Text Processing ---
+nltk
+textstat
