@@ -20,7 +20,7 @@ The following insights are currently saved in the `/dashboard` folder:
 ## 🛠 Tech Stack
 - **Language:** Python
 - **Libraries:** Pandas, Scikit-learn, Matplotlib, Seaborn, WordCloud
-- **ML Model:** Passive Aggressive Classifier (Baseline)
+- **ML Model:** Random forest classifier
 
 ## 📁 Repository Structure
 - `data/processed/`: Master cleaned dataset.
