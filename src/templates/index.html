@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🛡️ AI Auditor Pro | 2025 Edition</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --bg: #0b0f19; --card-bg: rgba(30, 41, 59, 0.7); --accent: #38bdf8; --neon-red: #f43f5e; --neon-green: #10b981; }
+        body { background: radial-gradient(circle at top, #1e293b, var(--bg)); color: #e2e8f0; font-family: 'Inter', system-ui; min-height: 100vh; }
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-title { font-weight: 900; letter-spacing: -2px; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .status-pill { background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid var(--accent); font-weight: 700; padding: 4px 15px; border-radius: 50px; font-size: 0.8rem; }
+        .audit-item { font-size: 0.85rem; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .form-control { background: rgba(0,0,0,0.3); border: 1px solid #334155; color: #fff; border-radius: 15px; padding: 20px; }
+        .form-control:focus { background: rgba(0,0,0,0.4); border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+        .btn-audit { background: var(--accent); color: #000; font-weight: 800; border-radius: 15px; transition: 0.3s; border: none; }
+        .btn-audit:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(56, 189, 248, 0.5); }
+        .trigger-badge { background: #334155; color: var(--accent); border: 1px solid var(--accent); padding: 5px 12px; border-radius: 8px; margin: 4px; font-weight: 600; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <span class="status-pill mb-3 d-inline-block">PIPELINE VERIFICATION COMPLETE ✅</span>
+        <h1 class="hero-title display-3">AI NEWS AUDITOR <span style="font-size: 1.5rem; vertical-align: middle;">PRO</span></h1>
+        <p class="text-secondary">Next-Generation Neural Verification & Narrative Auditing</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100">
+                <h5 class="mb-4 text-accent fw-bold">SYSTEM AUDIT TRAIL</h5>
+                <div class="audit-item">🟢 <b>Dataset Logic:</b> Mapped 100k+ instances across political domains.</div>
+                <div class="audit-item">🟢 <b>Sanitization:</b> Sanitized null-strings & handled duplicate variance.</div>
+                <div class="audit-item">🟢 <b>Serialization:</b> 'master_cleaned.csv' localized for high-speed I/O.</div>
+                <div class="audit-item">🟢 <b>Linguistic DNA:</b> Calculated Burstiness & Complexity Ratios.</div>
+                <div class="audit-item">🟢 <b>TF-IDF Mapping:</b> Cross-referenced 500 High-Impact Features.</div>
+                <div class="audit-item">🟢 <b>Neural Engine:</b> Random Forest Logic Calibrated with SVM Platt Scaling.</div>
+                <div class="audit-item">🟢 <b>XAI Ready:</b> Narrative Audit Engine operational for trigger mapping.</div>
+                
+                <div class="mt-4 p-3 rounded" style="background: rgba(0,0,0,0.2); font-family: monospace; font-size: 0.8rem;">
+                    SYSTEM ARCH: 32-bit Hybrid<br>STATUS: Active Inference Mode
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <form method="POST">
+                    <label class="form-label mb-3 fw-bold">INPUT NARRATIVE FOR NEURAL SCAN</label>
+                    <textarea name="text_input" class="form-control mb-4" rows="9" placeholder="Paste suspected article text here..."></textarea>
+                    <button type="submit" class="btn btn-audit w-100 py-3">RUN NARRATIVE AUDIT ENGINE</button>
+                </form>
+
+                {% if analysis %}
+                <div class="mt-5 p-4 rounded-4" style="background: rgba(0,0,0,0.2); border-left: 6px solid {{ analysis.color }};">
+                    <h2 style="color: {{ analysis.color }}; font-weight: 800;">{{ analysis.verdict }}</h2>
+                    <div class="d-flex align-items-center my-3">
+                        <span class="me-3">Detection Confidence:</span>
+                        <div class="progress flex-grow-1" style="height: 12px; background: #1e293b; border-radius: 10px;">
+                            <div class="progress-bar" style="width: {{ analysis.score }}%; background: {{ analysis.color }};"></div>
+                        </div>
+                        <span class="ms-3 fw-bold" style="color: {{ analysis.color }};">{{ analysis.score }}%</span>
+                    </div>
+
+                    {% if analysis.triggers %}
+                    <h6 class="mt-4 text-secondary text-uppercase fw-bold" style="font-size: 0.75rem;">Detected Misinformation Triggers:</h6>
+                    <div class="mt-2">
+                        {% for word in analysis.triggers %}
+                        <span class="trigger-badge">{{ word }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
