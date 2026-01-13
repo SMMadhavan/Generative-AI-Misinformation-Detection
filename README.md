@@ -23,7 +23,7 @@ The following insights are currently saved in the `/dashboard` folder:
 - **ML Model:** Random forest classifier
 
 ## 📁 Repository Structure
-- `data/processed/`: Master cleaned dataset.
+- `data/processed/`: Master cleaned and domain specific dataset.
 - `src/`: Source code for data processing.
 - `main.py`: Main execution script.
 - `venv/`: Virtual environment.
