@@ -120,7 +120,7 @@ def load_and_merge():
     return pd.concat([isot, welfake, genai], ignore_index=True).dropna()
 
 def run_eda_dashboard(df_features):
-    print("\n🔍 Generating EDA Visuals (Days 3-4 Tasks)...") 
+    print("\n🔍 Generating EDA Visuals") 
     plt.figure(figsize=(10, 5))
     sns.histplot(df_features['burstiness'], kde=True, color='teal')
     plt.title("Statistical Insight: Burstiness Distribution") 
