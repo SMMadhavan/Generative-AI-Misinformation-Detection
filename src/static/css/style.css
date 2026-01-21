@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary: #1a73e8;
+    --success: #1e8e3e;
+    --warning: #f9ab00;
+    --danger: #d93025;
+    --bg-light: #f8f9fa;
+    --text-dark: #202124;
+}
+
+body { background-color: var(--bg-light); font-family: 'Inter', sans-serif; color: var(--text-dark); }
+.tech-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(#dfe1e5 1px, transparent 1px); background-size: 20px 20px; opacity: 0.6; z-index: -1; }
+
+.navbar { background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(8px); }
+.status-indicator { height: 10px; width: 10px; background-color: var(--success); border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+.icon-box { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+.result-box { border-left: 5px solid transparent; transition: all 0.3s ease; }
+.result-box.VERIFIED_HUMAN { background-color: #e6f4ea; border-left-color: var(--success); }
+.result-box.SUSPICIOUS { background-color: #fef7e0; border-left-color: var(--warning); }
+.result-box.AI_GENERATED { background-color: #fce8e6; border-left-color: var(--danger); }
+
+.process-flow .step { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 8px; width: 55px; font-weight: bold; font-size: 0.7rem; }
+.process-flow .arrow { color: #adb5bd; font-weight: bold; font-size: 1.2rem; }
+.trigger-badge { font-size: 0.85rem; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center; background: rgba(217, 48, 37, 0.08); color: var(--danger); border: 1px solid rgba(217, 48, 37, 0.2); margin-right: 6px; margin-bottom: 6px; font-weight: 600; }
+
+.dna-list { padding-left: 0; margin-bottom: 0; }
+.dna-list li { font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed #eee; color: #5f6368; display: flex; align-items: center; }
+.dna-list li:last-child { border-bottom: none; }
+.dna-list li b { color: var(--text-dark); margin-right: 5px; }
+
+.btn-primary { background-color: var(--primary); border: none; padding: 12px; border-radius: 8px; }
+.animate-fade-in { animation: fadeIn 0.6s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
