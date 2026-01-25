@@ -102,3 +102,11 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 ├── neural_db.sqlite        # Live audit database
 ├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
+
+## 📌 Future Roadmap
+
+## N-gram Optimization: Fine-tuning the vectorizer to catch multi-word AI phrases.
+
+## Deep Learning Integration: Exploring LSTM/BERT for deeper semantic analysis.
+
+## API Deployment: Dockerizing the Flask app for cloud deployment.
