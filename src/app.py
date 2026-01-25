@@ -5,6 +5,12 @@ import joblib
 import pandas as pd
 import numpy as np
 import warnings
+
+import shutil
+# FORCE CLEAN CACHE
+if os.path.exists('cachedir'):
+    shutil.rmtree('cachedir')
+
 from flask import Flask, render_template, request, make_response
 from scipy.sparse import hstack
 from fpdf import FPDF  # Ensure you have installed: pip install fpdf
@@ -23,13 +29,13 @@ from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
-DB_PATH = 'neural_db.sqlite'
+DB_PATH = 'neural_db_v2.sqlite'
 MODEL_DIR = 'models/'
 CSV_SOURCE_PATH = 'data/processed/master_cleaned.csv'
 
 # Domain Sensitivity Configuration
 DOMAIN_CONFIG = {
-    "politics": { "label": "Politics", "threshold": 0.70 },
+    "politics": { "label": "Politics", "threshold": 0.10 },
     "finance": { "label": "Finance", "threshold": 0.75 },
     "news": { "label": "General News", "threshold": 0.65 },
     "education": { "label": "Education", "threshold": 0.65 },
@@ -40,7 +46,10 @@ DOMAIN_CONFIG = {
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS training_dataset (id INTEGER PRIMARY KEY, text TEXT, label INTEGER)''')
+    # FORCE RESET THE TABLE TO FIX THE COLUMN ISSUE
+    c.execute("DROP TABLE IF EXISTS training_dataset") 
+    c.execute('''CREATE TABLE training_dataset (id INTEGER PRIMARY KEY, text TEXT, label INTEGER)''')
+    
     c.execute('''CREATE TABLE IF NOT EXISTS audit_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, input_text TEXT, domain TEXT, verdict TEXT, confidence REAL)''')
     conn.commit()
     return conn
@@ -147,7 +156,7 @@ def train_and_evaluate():
     print("🚀 NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
     print("="*80)
     
-    migrate_csv_to_db()
+    #migrate_csv_to_db()
     conn = sqlite3.connect(DB_PATH)
     try: 
         print("   [PIPELINE] Fetching Data from SQLite DB...")
@@ -162,7 +171,21 @@ def train_and_evaluate():
     print(f"   [DATA] Total Records Loaded: {len(df)}")
     if len(df) > 20000:
         print("   [OPTIMIZATION] Downsampling to 20,000 records for performance...")
-        df = df.groupby('label').apply(lambda x: x.sample(n=10000, random_state=42)).reset_index(drop=True)
+        # SAFEST METHOD: This samples 10k items per group without deleting columns
+        try:
+            df = df.groupby('label').sample(n=10000, random_state=42)
+        except ValueError:
+            # Fallback if one group is too small: just take the top 20k
+            df = df.sample(n=20000, random_state=42)
+
+    # ================= CRITICAL DATA SANITIZATION =================
+    print(f"   [CLEANING] Removing empty rows... (Before: {len(df)})")
+    # 1. Drop rows where text is missing/empty
+    df.dropna(subset=['text', 'label'], inplace=True)
+    # 2. Ensure all text is actually string format
+    df['text'] = df['text'].astype(str)
+    print(f"   [CLEANING] Data clean. (After: {len(df)})")
+    # ==============================================================
 
     print("\n⚙️  FEATURE ENGINEERING:")
     print("   - Extracting Linguistic DNA...")
@@ -174,6 +197,27 @@ def train_and_evaluate():
     X_text = tfidf.fit_transform(df['text'].astype(str))
     
     selector = SelectKBest(score_func=chi2, k=500)
+    
+    # ================= EMERGENCY FIX START =================
+    # 1. Force all columns to lowercase and remove spaces
+    df.columns = df.columns.str.strip().str.lower()
+    
+    # 2. Rename common variations if 'label' is still missing
+    rename_map = {
+        'class': 'label',
+        'target': 'label',
+        'fake': 'label', 
+        'label ': 'label'
+    }
+    df.rename(columns=rename_map, inplace=True)
+
+    # 3. DEBUG PRINT: Check if it exists now
+    print(f"DEBUG: Final Columns available: {df.columns.tolist()}")
+    
+    if 'label' not in df.columns:
+        raise ValueError(f"CRITICAL ERROR: 'label' column is MISSING. Found only: {df.columns.tolist()}")
+    # ================= EMERGENCY FIX END =================
+    
     X_text_selected = selector.fit_transform(X_text, df['label'])
     
     scaler = StandardScaler()
