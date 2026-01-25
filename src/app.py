@@ -7,13 +7,12 @@ import numpy as np
 import warnings
 
 import shutil
-# FORCE CLEAN CACHE
 if os.path.exists('cachedir'):
     shutil.rmtree('cachedir')
 
 from flask import Flask, render_template, request, make_response
 from scipy.sparse import hstack
-from fpdf import FPDF  # Ensure you have installed: pip install fpdf
+from fpdf import FPDF  
 
 # Sklearn Imports
 from sklearn.model_selection import train_test_split
