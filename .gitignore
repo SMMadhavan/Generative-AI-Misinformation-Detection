@@ -1,8 +1,8 @@
 venv/
-neural_db.sqlite
 models/
 __pycache__/
 *.pyc
 .env
 .DS_Store
 data/
+neural_db_v2.sqlite

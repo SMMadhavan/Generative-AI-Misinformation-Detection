@@ -12,7 +12,7 @@ if os.path.exists('cachedir'):
 
 from flask import Flask, render_template, request, make_response
 from scipy.sparse import hstack
-from fpdf import FPDF  
+from fpdf import FPDF 
 
 # Sklearn Imports
 from sklearn.model_selection import train_test_split
@@ -41,11 +41,10 @@ DOMAIN_CONFIG = {
     "healthcare": { "label": "Healthcare", "threshold": 0.80 }
 }
 
-# --- 1. DATABASE LAYER ---
+# Database layer
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    # FORCE RESET THE TABLE TO FIX THE COLUMN ISSUE
     c.execute("DROP TABLE IF EXISTS training_dataset") 
     c.execute('''CREATE TABLE training_dataset (id INTEGER PRIMARY KEY, text TEXT, label INTEGER)''')
     
@@ -90,7 +89,7 @@ def get_stats():
     conn.close()
     return stats
 
-# --- 2. FORENSIC FEATURE ENGINEERING ---
+# Forensic feature engineering
 def get_advanced_features(text):
     text = str(text).lower()
     words = text.split()
@@ -149,7 +148,7 @@ def extract_misinfo_triggers(text):
     if not triggers: triggers.append(("Structure", "Low Variance / Robotic Pattern"))
     return sorted(list(set(triggers)), key=lambda x: x[0])[:6]
 
-# --- 3. TRAINING PIPELINE (REQUIRED FOR TERMINAL OUTPUT) ---
+# Training pipeline
 def train_and_evaluate():
     print("\n" + "="*80)
     print("🚀 NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
@@ -170,11 +169,9 @@ def train_and_evaluate():
     print(f"   [DATA] Total Records Loaded: {len(df)}")
     if len(df) > 20000:
         print("   [OPTIMIZATION] Downsampling to 20,000 records for performance...")
-        # SAFEST METHOD: This samples 10k items per group without deleting columns
         try:
             df = df.groupby('label').sample(n=10000, random_state=42)
         except ValueError:
-            # Fallback if one group is too small: just take the top 20k
             df = df.sample(n=20000, random_state=42)
 
     # ================= CRITICAL DATA SANITIZATION =================
