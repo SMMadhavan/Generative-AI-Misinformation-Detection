@@ -174,14 +174,11 @@ def train_and_evaluate():
         except ValueError:
             df = df.sample(n=20000, random_state=42)
 
-    # ================= CRITICAL DATA SANITIZATION =================
+    # Data sanitization
     print(f"   [CLEANING] Removing empty rows... (Before: {len(df)})")
-    # 1. Drop rows where text is missing/empty
     df.dropna(subset=['text', 'label'], inplace=True)
-    # 2. Ensure all text is actually string format
     df['text'] = df['text'].astype(str)
     print(f"   [CLEANING] Data clean. (After: {len(df)})")
-    # ==============================================================
 
     print("\n⚙️  FEATURE ENGINEERING:")
     print("   - Extracting Linguistic DNA...")
@@ -193,12 +190,8 @@ def train_and_evaluate():
     X_text = tfidf.fit_transform(df['text'].astype(str))
     
     selector = SelectKBest(score_func=chi2, k=500)
-    
-    # ================= EMERGENCY FIX START =================
-    # 1. Force all columns to lowercase and remove spaces
     df.columns = df.columns.str.strip().str.lower()
     
-    # 2. Rename common variations if 'label' is still missing
     rename_map = {
         'class': 'label',
         'target': 'label',
@@ -207,12 +200,10 @@ def train_and_evaluate():
     }
     df.rename(columns=rename_map, inplace=True)
 
-    # 3. DEBUG PRINT: Check if it exists now
     print(f"DEBUG: Final Columns available: {df.columns.tolist()}")
     
     if 'label' not in df.columns:
         raise ValueError(f"CRITICAL ERROR: 'label' column is MISSING. Found only: {df.columns.tolist()}")
-    # ================= EMERGENCY FIX END =================
     
     X_text_selected = selector.fit_transform(X_text, df['label'])
     
@@ -257,7 +248,7 @@ def train_and_evaluate():
     joblib.dump(selector, MODEL_DIR + 'feature_selector.joblib')
     print("🎉 SYSTEM READY. LAUNCHING FLASK INTERFACE...\n")
 
-# --- 4. FLASK INTEGRATION ---
+# Flask integration
 
 @app.route('/download_report')
 def download_report():
@@ -398,5 +389,5 @@ def index():
     return render_template('index.html', analysis=analysis, domains=DOMAIN_CONFIG, selected_domain=domain_selected, stats=stats)
 
 if __name__ == '__main__':
-    train_and_evaluate() # Run Pipeline on Start
+    train_and_evaluate()
     app.run(debug=True, use_reloader=False)
