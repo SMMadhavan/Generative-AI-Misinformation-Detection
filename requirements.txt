@@ -1,13 +1,11 @@
-# --- Project Foundation ---
+# Web Framework 
+Flask
+
+# Core AI & Data 
 pandas
 numpy
 scikit-learn
 joblib
 
-# --- Visualization & Reports ---
-matplotlib
-seaborn
-
-# --- Text Processing ---
-nltk
-textstat
+# Reporting & Utils 
+fpdf
