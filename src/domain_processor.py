@@ -35,7 +35,6 @@ def apply_domain_tags():
     df.to_csv(output_path, index=False)
     print(f"✅ Domain tagging complete. File saved to: {output_path}")
     
-    # --- FIXED PRINT SECTION ---
     print("\n📊 DOMAIN DISTRIBUTION (%)")
     stats = df['domain'].value_counts(normalize=True) * 100
     # Rounded to 2 decimal places with a % sign added for clarity

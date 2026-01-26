@@ -379,7 +379,7 @@ def index():
                 "verdict_code": verdict,
                 "score": round(adjusted_score * 100, 2),
                 "triggers": triggers,
-                "dna_visual": normalize_dna_for_ui(dna_raw), # THIS IS NOW FIXED
+                "dna_visual": normalize_dna_for_ui(dna_raw),
                 "dna_explained": interpret_dna(dna_raw),
                 "threshold": threshold
             }

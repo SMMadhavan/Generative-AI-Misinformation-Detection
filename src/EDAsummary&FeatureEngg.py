@@ -1,111 +1,110 @@
+import sqlite3
 import pandas as pd
-import os
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import warnings
+import os
 
-# Set professional aesthetics
-sns.set_theme(style="whitegrid")
+from sklearn.svm import LinearSVC
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
+from scipy.sparse import hstack
 
-def generate_eda_summary_full(df):
-    """Satisfies Day 3: Full Technical Stats + Visualization"""
-    print("\n" + "="*20 + " DAY 3: EDA SUMMARY REPORT " + "="*20)
-    
-    # 1. DETAILED TERMINAL OUTPUT (Restored)
-    print(f"✅ Dataset Shape: {df.shape[0]} rows x {df.shape[1]} columns")
-    mem_usage = df.memory_usage(deep=True).sum() / 1024**2
-    print(f"✅ System Memory Usage: {mem_usage:.2f} MB")
-    
-    print("\n📋 COLUMN DATA TYPES (Technical Specification):")
-    print(df.dtypes)
-    
-    null_count = df.isnull().sum().sum()
-    print(f"\n✅ QUALITY CHECK: {null_count} missing values found.")
-    
-    # Mentioning the cleaning logic from your logs
-    print("✅ DATA CLEANING: 15,629 Duplicate rows identified and removed [Standardization].")
-    
-    print("\n🎯 CLASS BALANCE (Label Analysis):")
-    balance = df['label'].value_counts(normalize=True) * 100
-    print(f"   - Human (Real): {balance.get(1, 0):.1f}%")
-    print(f"   - Machine (AI): {balance.get(0, 0):.1f}%")
-    
-    # 2. VISUALIZATION
-    plt.figure(figsize=(8, 5))
-    ax = sns.countplot(data=df, x='label', palette='viridis')
-    plt.title("Data Quality Dimension: Class Balance Verification", fontsize=14)
-    plt.xticks([0, 1], ['Machine (AI)', 'Human (Real)'])
-    plt.ylabel("Article Count")
-    
-    # Add percentage labels on bars
-    for p in ax.patches:
-        height = p.get_height()
-        ax.text(p.get_x() + p.get_width()/2., height + 3,
-                f'{100 * height / len(df):.1f}%', ha="center")
+warnings.filterwarnings('ignore')
 
-    if not os.path.exists('dashboard'): os.makedirs('dashboard')
-    plt.savefig('dashboard/viva_day3_balance.png')
-    print("\n📊 Chart generated: dashboard/viva_day3_balance.png")
-    print("="*67)
-    plt.show()
+# Configuration
+DB_PATH = 'neural_db_v2.sqlite'
+OUTPUT_IMG_PATH = 'reports/svm_feature_importance.png'
 
-def generate_feature_evolution_full(sample_text, engineered_vector):
-    """Satisfies Day 4: DNA Extraction Table + Feature Plot"""
-    print("\n" + "="*15 + " DAY 4: ADVANCED FEATURE ENGINEERING " + "="*15)
-    
-    # 1. DETAILED TERMINAL OUTPUT (Restored)
-    feature_names = ['Uniformity', 'Richness', 'Buzz_Density', 'Burstiness', 'Complexity']
-    print(f"🚀 Feature Evolution: 1 Input (Raw Text) -> {len(feature_names)} Output Senses")
-    
-    print(f"\n📝 RAW INPUT SAMPLE (First 50 chars):")
-    print(f"   \"{sample_text[:50]}...\"")
-    
-    print("\n🧬 ENGINEERED NUMERICAL VECTOR (The Model's Brain):")
-    feat_df = pd.DataFrame([engineered_vector], columns=feature_names)
-    print(feat_df.to_string(index=False))
-    
-    print("\n💡 WHY THIS MATTERS (Linguistic Logic):")
-    print("   - Burstiness: Catches robotic, flat sentence rhythms.")
-    print("   - Complexity: Detects the 'pseudo-intellectual' tone of AI models.")
-    print("   - Uniformity: Highlights the lack of natural human variance.")
-    
-    # 2. VISUALIZATION
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=feature_names, y=engineered_vector, palette='magma')
-    plt.title("Linguistic DNA: Visualizing Engineered Features", fontsize=14)
-    plt.ylabel("Statistical Weight")
-    
-    plt.savefig('dashboard/viva_day4_features.png')
-    print("\n📊 Chart generated: dashboard/viva_day4_features.png")
-    print("="*67)
-    plt.show()
+# Replicating feature engineering
+def get_advanced_features(text):
+    text = str(text).lower()
+    words = text.split()
+    if len(words) == 0: return [0.0] * 7
 
-# --- REPLACING THE BOTTOM OF YOUR SCRIPT ---
+    sentences = [s for s in text.split('.') if s.strip()]
+    sent_lengths = [len(s.split()) for s in sentences]
+    if not sent_lengths: sent_lengths = [0]
+    
+    uniformity = np.std(sent_lengths) if len(sent_lengths) > 1 else 0
+    richness = len(set(words)) / len(words)
+    buzzwords = ['pivotal', 'delve', 'comprehensive', 'resonate', 'unravel', 'provisionally', 'tapestry', 'synergistic', 'paradigm', 'underscores', 'multifaceted', 'nuance', 'robust', 'landscape']
+    buzz_density = sum([1 for w in words if w in buzzwords]) / len(words)
+    burstiness = np.var(sent_lengths) if len(sent_lengths) > 1 else 0
+    punc_density = sum([1 for char in text if char in '.,!?;:']) / len(words)
+    avg_sent_len = np.mean(sent_lengths)
+    complexity_ratio = sum([1 for w in words if len(w) > 7]) / len(words)
+
+    return [float(uniformity), float(richness), float(buzz_density), float(burstiness), float(complexity_ratio), float(punc_density), float(avg_sent_len)]
+
+def analyze_svm_weights():
+    print("\n" + "="*80)
+    print("🧠 SVM COEFFICIENT ANALYSIS: WHAT THE MODEL 'THINKS'")
+    print("="*80)
+
+    # 1. Load & Sample Data
+    conn = sqlite3.connect(DB_PATH)
+    try: df = pd.read_sql("SELECT * FROM training_dataset", conn)
+    except: return
+    conn.close()
+
+    if len(df) > 5000:
+        df = df.sample(n=5000, random_state=42)
+
+    df.dropna(subset=['text', 'label'], inplace=True)
+    df['text'] = df['text'].astype(str)
+
+    # 2. Vectorize & Prepare
+    print("   [INFO] Vectorizing Text and calculating Linguistic DNA...")
+    tfidf = TfidfVectorizer(stop_words='english', max_features=1000) # Limit features for cleaner plot
+    X_text = tfidf.fit_transform(df['text'])
+    
+    features_list = [get_advanced_features(t) for t in df['text']]
+    feature_names_dna = ['DNA_Uniformity', 'DNA_Richness', 'DNA_Buzzwords', 'DNA_Burstiness', 'DNA_Complexity', 'DNA_Punc', 'DNA_Length']
+    
+    X_custom = np.array(features_list)
+    scaler = StandardScaler()
+    X_custom_scaled = scaler.fit_transform(X_custom)
+
+    X_final = hstack([X_text, X_custom_scaled])
+    
+    # 3. Train Linear SVC
+    print("   [INFO] Training LinearSVC to extract coefficients...")
+    svm = LinearSVC(C=10, random_state=42, dual='auto', max_iter=2000)
+    svm.fit(X_final, df['label'])
+
+    # 4. Extract Top Coefficients
+    # Get all feature names: TFIDF words + DNA names
+    all_feature_names = tfidf.get_feature_names_out().tolist() + feature_names_dna
+    
+    # Get weights (coefficients)
+    coefs = svm.coef_.ravel()
+    
+    # Sort them
+    # Positive Coefs = Strong indicators of Class 1 (AI)
+    # Negative Coefs = Strong indicators of Class 0 (Human)
+    top_positive_indices = np.argsort(coefs)[-15:]
+    top_negative_indices = np.argsort(coefs)[:15]
+    
+    top_indices = np.hstack([top_negative_indices, top_positive_indices])
+    top_features = [all_feature_names[i] for i in top_indices]
+    top_coefs = coefs[top_indices]
+
+    # 5. Plot
+    print("   [INFO] Plotting Feature Importance...")
+    plt.figure(figsize=(10, 8))
+    colors = ['green' if c < 0 else 'red' for c in top_coefs]
+    
+    plt.barh(range(len(top_indices)), top_coefs, color=colors)
+    plt.yticks(range(len(top_indices)), top_features)
+    plt.axvline(x=0, color='black', linestyle='--')
+    plt.title("Top Predictors: Human (Green) vs. AI (Red)")
+    plt.xlabel("SVM Coefficient Magnitude")
+    
+    if not os.path.exists('reports'): os.makedirs('reports')
+    plt.savefig(OUTPUT_IMG_PATH)
+    print(f"   ✅ Saved Coefficient Chart to: {OUTPUT_IMG_PATH}")
+    print("="*80 + "\n")
 
 if __name__ == "__main__":
-    processed_path = 'data/processed/master_cleaned.csv'
-    
-    if os.path.exists(processed_path):
-        master_df = pd.read_csv(processed_path)
-        
-        # 1. Run the existing reports
-        generate_eda_summary_full(master_df)
-        
-        example_text = master_df['text'].iloc[0]
-        example_vector = [0.85, 0.42, 0.05, 12.5, 68.2] # Current values shown in your logs
-        generate_feature_evolution_full(example_text, example_vector)
-
-        # 2. SAVE the features back to the CSV for Model Comparison (Review 2 Requirement)
-        # To fix the NameError, we map the example_vector values to the whole column for now
-        # This satisfies 'Data Preparation for Modeling'
-        print("\n🛠️ Preparing numerical features for Review 2...")
-        master_df['Uniformity'] = example_vector[0]
-        master_df['Richness'] = example_vector[1]
-        master_df['Buzz_Density'] = example_vector[2]
-        master_df['Burstiness'] = example_vector[3]
-        master_df['Complexity'] = example_vector[4]
-
-        # Save the updated dataframe
-        master_df.to_csv(processed_path, index=False)
-        print("✅ SUCCESS: 5 Linguistic Features saved to master_cleaned.csv")
-    else:
-        print("⚠️ master_cleaned.csv not found!")
+    analyze_svm_weights()

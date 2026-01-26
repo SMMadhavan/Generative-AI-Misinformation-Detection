@@ -44,11 +44,11 @@ def visualize_feature_transformation():
     ax.set_xlim(0, 16)
     
     # 5. Save the Artifact for Day 9 Portfolio [cite: 113]
-    if not os.path.exists('dashboard'): os.makedirs('dashboard')
-    plt.savefig('dashboard/feature_transformation_flow.png')
+    if not os.path.exists('reports'): os.makedirs('reports')
+    plt.savefig('reports/feature_transformation_flow.png')
     
     print("✅ Visualizing the transformation of features into [text, label].")
-    print("💾 Chart saved to dashboard/feature_transformation_flow.png")
+    print("💾 Chart saved to reports/feature_transformation_flow.png")
     plt.show()
 
 if __name__ == "__main__":

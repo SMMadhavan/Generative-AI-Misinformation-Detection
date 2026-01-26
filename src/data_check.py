@@ -36,7 +36,7 @@ def run_viva_report():
         else:
             print(f"⚠️ Warning: {path} not found. Ensure main.py has run successfully!")
 
-    # --- VISUALIZATION BLOCK [cite: 105, 109] ---
+    # Visualization block
     if report_data:
         viz_df = pd.DataFrame(report_data)
         plt.figure(figsize=(10, 6))
@@ -47,9 +47,9 @@ def run_viva_report():
         plt.grid(axis='y', linestyle='--', alpha=0.7)
         
         # Save as artifact for Day 9 portfolio [cite: 113, 114]
-        if not os.path.exists('dashboard'): os.makedirs('dashboard')
-        plt.savefig('dashboard/data_balance_check.png')
-        print(f"\n✅ Visual Insight saved to: dashboard/data_balance_check.png")
+        if not os.path.exists('reports'): os.makedirs('reports')
+        plt.savefig('reports/data_balance_check.png')
+        print(f"\n✅ Visual Insight saved to: reports/data_balance_check.png")
         plt.show()
 
 if __name__ == "__main__":
