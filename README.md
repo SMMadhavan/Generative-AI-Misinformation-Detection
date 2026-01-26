@@ -98,8 +98,8 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 │   ├── static/             # CSS, Images, JS assets
 │   ├── templates/          # HTML templates for Flask
 │   └── app.py              # Main application entry point
-├── dashboard/              # Saved EDA visualizations
-├── neural_db.sqlite        # Live audit database
+├── reports/                # Saved EDA visualizations
+├── neural_db_v2.sqlite     # Live audit database
 ├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
 ```
