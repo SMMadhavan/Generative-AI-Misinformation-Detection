@@ -108,3 +108,6 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 * **N-gram Optimization:** Fine-tuning the vectorizer to catch multi-word AI phrases.
 * **Deep Learning Integration:** Exploring LSTM/BERT for deeper semantic analysis.
 * **API Deployment:** Dockerizing the Flask app for cloud deployment.
+
+## 📥 Project Deliverables (Evaluator Access)
+**[📂 CLICK HERE TO ACCESS PROJECT DOCUMENTATION & ASSETS](./Docs)**
