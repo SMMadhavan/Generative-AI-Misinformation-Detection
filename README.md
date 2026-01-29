@@ -91,6 +91,7 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 ## 📁 Repository Structure
 
 ```text
+├── Docs/                   # 📂Media Documentation 
 ├── data/
 │   └── processed/          # Master cleaned dataset (CSV)
 ├── models/                 # Pre-trained .joblib models & vectorizers
@@ -103,11 +104,12 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 ├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
 ```
+
 ## 📌 Future Roadmap
 
 * **N-gram Optimization:** Fine-tuning the vectorizer to catch multi-word AI phrases.
 * **Deep Learning Integration:** Exploring LSTM/BERT for deeper semantic analysis.
 * **API Deployment:** Dockerizing the Flask app for cloud deployment.
 
-## 📥 Project Deliverables (Evaluator Access)
+## 📥 Project Deliverables 
 **[📂 CLICK HERE TO ACCESS PROJECT DOCUMENTATION & ASSETS](./Docs)**
