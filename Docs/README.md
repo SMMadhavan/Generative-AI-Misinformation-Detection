@@ -9,8 +9,8 @@ Due to high-resolution assets (60MB+ Documentation and Video), the project deliv
 ### 📂 What is inside this Drive?
 | File | Description |
 | :--- | :--- |
-| **📄 Neural_Auditor_Report.pdf** | The complete 54-page technical report and forensic analysis. |
-| **📊 Presentation.pptx** | Official project presentation slides. |
+| **📄 Project_Documentation.pdf** | The complete 54-page technical report and forensic analysis. |
+| **📊 Project_PPT.pptx** | Official project presentation slides. |
 | **🎥 Project_Demo.mp4** | A full video walkthrough of the detection workflow. |
 
-> *Note: These files are publicly accessible for evaluation purposes.*
+> *Note: These files are accessible for evaluation purposes.*
