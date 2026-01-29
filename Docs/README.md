@@ -1,6 +1,6 @@
 # 📂 Project Documentation & Assets
 
-Due to high-resolution assets (60MB+ Report and Video), the project deliverables are hosted on a secure Google Drive repository.
+Due to high-resolution assets (60MB+ Documentation and Video), the project deliverables are hosted on a secure Google Drive repository.
 
 ## 👉 [CLICK HERE TO ACCESS PROJECT DRIVE](https://drive.google.com/drive/folders/1M964OZ9J8HbheSS6WY1a7MdyGrGEMOwU?usp=sharing)
 
