@@ -13,4 +13,4 @@ Due to high-resolution assets (60MB+ Documentation and Video), the project deliv
 | **📊 Project_PPT.pptx** | Official project presentation slides. |
 | **🎥 Project_Demo.mp4** | A full video walkthrough of the detection workflow. |
 
-*Note: These files are accessible for evaluation purposes.*
+>*Note: These files are accessible for evaluation purposes.*
