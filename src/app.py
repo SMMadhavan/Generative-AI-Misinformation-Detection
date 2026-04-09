@@ -151,7 +151,7 @@ def extract_misinfo_triggers(text):
 # Training pipeline
 def train_and_evaluate():
     print("\n" + "="*80)
-    print("🚀 NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
+    print("NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
     print("="*80)
     
     #migrate_csv_to_db()
@@ -163,7 +163,7 @@ def train_and_evaluate():
     conn.close()
     
     if df.empty:
-        print("❌ FATAL: No training data found.")
+        print("FATAL: No training data found.")
         return
 
     print(f"   [DATA] Total Records Loaded: {len(df)}")
@@ -180,7 +180,7 @@ def train_and_evaluate():
     df['text'] = df['text'].astype(str)
     print(f"   [CLEANING] Data clean. (After: {len(df)})")
 
-    print("\n⚙️  FEATURE ENGINEERING:")
+    print("\n FEATURE ENGINEERING:")
     print("   - Extracting Linguistic DNA...")
     features_list = [get_advanced_features(t)[0] for t in df['text']]
     custom_features = np.array(features_list, dtype=np.float64)
@@ -213,7 +213,7 @@ def train_and_evaluate():
 
     X_train, X_test, y_train, y_test = train_test_split(X_final, df['label'], test_size=0.2, random_state=42)
 
-    print("\n🏆 MODEL COMPARISON TABLE:")
+    print("\n MODEL COMPARISON TABLE:")
     print(f"   {'Algorithm':<25} | {'Accuracy':<10} | {'ROC-AUC':<10} | {'Fit Time'}")
     print("   " + "-"*65)
     
@@ -236,7 +236,7 @@ def train_and_evaluate():
         except: auc = 0.0
         print(f"   {name:<25} | {round(acc*100, 2)}%      | {round(auc, 3):<10} | {round(end_time - start_time, 3)}s")
 
-    print("\n🚀  TRAINING FINAL ENSEMBLE (LinearSVC + Calibration)...")
+    print("\n TRAINING FINAL ENSEMBLE (LinearSVC + Calibration)...")
     base_svm = LinearSVC(C=10, random_state=42, max_iter=3000)
     final_model = CalibratedClassifierCV(base_svm, cv=3)
     final_model.fit(X_train, y_train)
@@ -246,7 +246,7 @@ def train_and_evaluate():
     joblib.dump(tfidf, MODEL_DIR + 'tfidf_vectorizer.joblib')
     joblib.dump(scaler, MODEL_DIR + 'dna_scaler.joblib')
     joblib.dump(selector, MODEL_DIR + 'feature_selector.joblib')
-    print("🎉 SYSTEM READY. LAUNCHING FLASK INTERFACE...\n")
+    print(" SYSTEM READY. LAUNCHING FLASK INTERFACE...\n")
 
 # Flask integration
 
