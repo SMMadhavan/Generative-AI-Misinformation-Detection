@@ -45,7 +45,7 @@ def get_advanced_features(text):
 
 def generate_learning_curve():
     print("\n" + "="*80)
-    print("📈 GENERATING LEARNING CURVES (LINEAR SVC)")
+    print(" GENERATING LEARNING CURVES (LINEAR SVC)")
     print("="*80)
 
     # A. Load Data
@@ -59,7 +59,7 @@ def generate_learning_curve():
     conn.close()
 
     if df.empty:
-        print("   ❌ Error: No data found.")
+        print("    Error: No data found.")
         return
 
     # Clean
@@ -127,7 +127,7 @@ def generate_learning_curve():
         os.makedirs('reports')
         
     plt.savefig(OUTPUT_IMG_PATH)
-    print(f"\n   ✅ Success! Learning curve saved to: {OUTPUT_IMG_PATH}")
+    print(f"\n    Success! Learning curve saved to: {OUTPUT_IMG_PATH}")
     print("="*80 + "\n")
 
 if __name__ == "__main__":

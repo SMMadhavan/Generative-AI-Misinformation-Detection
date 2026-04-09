@@ -4,13 +4,13 @@ import seaborn as sns
 import os
 
 def run_quality_audit():
-    print("🔍 INITIATING DATA QUALITY AUDIT...")
+    print(" INITIATING DATA QUALITY AUDIT...")
     
     # Path to your processed data
     processed_path = 'data/processed/master_cleaned.csv'
     
     if not os.path.exists(processed_path):
-        print("⚠️ Error: master_cleaned.csv not found. Please run main.py first!")
+        print(" Error: master_cleaned.csv not found. Please run main.py first!")
         return
 
     # 1. Load Data
@@ -50,10 +50,10 @@ def run_quality_audit():
         if not os.path.exists(folder): os.makedirs(folder)
         plt.savefig(f'{folder}/data_health_check.png')
     
-    print(f"\n✅ AUDIT COMPLETE")
-    print(f"📊 Missing Values: {missing_count} (Requirement Satisfied)")
-    print(f"📊 Duplicates Removed: {duplicates_removed} (Pipeline Satisfied)")
-    print(f"📂 Visual artifact saved to: reports/data_health_check.png")
+    print(f"\n AUDIT COMPLETE")
+    print(f" Missing Values: {missing_count} (Requirement Satisfied)")
+    print(f" Duplicates Removed: {duplicates_removed} (Pipeline Satisfied)")
+    print(f" Visual artifact saved to: reports/data_health_check.png")
     plt.show()
 
 if __name__ == "__main__":

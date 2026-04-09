@@ -7,11 +7,11 @@ def apply_domain_tags():
     """Step 1: Tagging the data and showing terminal stats"""
     path = 'data/processed/master_cleaned.csv'
     if not os.path.exists(path):
-        print("❌ Error: 'data/processed/master_cleaned.csv' not found.")
+        print(" Error: 'data/processed/master_cleaned.csv' not found.")
         print("Please ensure your cleaning pipeline has been run first!")
         return None
     
-    print("🔍 Loading data for Domain Audit...")
+    print(" Loading data for Domain Audit...")
     df = pd.read_csv(path)
 
     # The 'Sorting Hat' logic to categorize text
@@ -27,15 +27,15 @@ def apply_domain_tags():
             return 'Healthcare'
         return 'General News'
 
-    print("🏷️ Applying Domain Tags (this may take a moment)...")
+    print(" Applying Domain Tags (this may take a moment)...")
     df['domain'] = df['text'].apply(get_domain)
 
     # Save the new version
     output_path = 'data/processed/master_with_domains.csv'
     df.to_csv(output_path, index=False)
-    print(f"✅ Domain tagging complete. File saved to: {output_path}")
+    print(f" Domain tagging complete. File saved to: {output_path}")
     
-    print("\n📊 DOMAIN DISTRIBUTION (%)")
+    print("\n DOMAIN DISTRIBUTION (%)")
     stats = df['domain'].value_counts(normalize=True) * 100
     # Rounded to 2 decimal places with a % sign added for clarity
     print(stats.round(2).astype(str) + '%')
@@ -47,7 +47,7 @@ def plot_domains(df):
     """Step 2: Creating the visualization for the reports folder"""
     if df is None: return
 
-    print("\n🎨 Generating Visualization Chart...")
+    print("\n Generating Visualization Chart...")
     
     # Set the visual style
     sns.set_theme(style="whitegrid")
@@ -78,7 +78,7 @@ def plot_domains(df):
     # Save the chart and display it
     plt.tight_layout()
     plt.savefig('reports/domain_diversity.png')
-    print("📂 Chart saved to: reports/domain_diversity.png")
+    print(" Chart saved to: reports/domain_diversity.png")
     plt.show()
 
 if __name__ == "__main__":
@@ -89,4 +89,4 @@ if __name__ == "__main__":
     if processed_df is not None:
         plot_domains(processed_df)
     
-    print("\n✨ Domain Analysis Finished Successfully!")
+    print("\n Domain Analysis Finished Successfully!")

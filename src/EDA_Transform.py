@@ -47,8 +47,8 @@ def visualize_feature_transformation():
     if not os.path.exists('reports'): os.makedirs('reports')
     plt.savefig('reports/feature_transformation_flow.png')
     
-    print("✅ Visualizing the transformation of features into [text, label].")
-    print("💾 Chart saved to reports/feature_transformation_flow.png")
+    print(" Visualizing the transformation of features into [text, label].")
+    print(" Chart saved to reports/feature_transformation_flow.png")
     plt.show()
 
 if __name__ == "__main__":

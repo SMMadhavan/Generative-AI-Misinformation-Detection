@@ -46,7 +46,7 @@ def get_advanced_features(text):
 # Optimization pipeline
 def run_optimization():
     print("\n" + "="*80)
-    print("🧬 HYPERPARAMETER TUNING: LINEAR SVC OPTIMIZATION")
+    print(" HYPERPARAMETER TUNING: LINEAR SVC OPTIMIZATION")
     print("="*80)
 
     # A. Load Data
@@ -60,7 +60,7 @@ def run_optimization():
     conn.close()
 
     if df.empty:
-        print("   ❌ Error: Database is empty.")
+        print("    Error: Database is empty.")
         return
 
     # Clean Data
@@ -117,18 +117,18 @@ def run_optimization():
 
     # E. Results
     print("\n" + "="*80)
-    print("🏆 OPTIMIZATION RESULTS")
+    print(" OPTIMIZATION RESULTS")
     print("="*80)
-    print(f"   ✅ Best Parameters: {grid_search.best_params_}")
-    print(f"   ✅ Best CV Score:   {round(grid_search.best_score_ * 100, 2)}%")
-    print(f"   ⏱️  Time Taken:     {round(elapsed, 2)} seconds")
+    print(f"    Best Parameters: {grid_search.best_params_}")
+    print(f"    Best CV Score:   {round(grid_search.best_score_ * 100, 2)}%")
+    print(f"     Time Taken:     {round(elapsed, 2)} seconds")
 
     # Validate on Test Set
     best_model = grid_search.best_estimator_
     y_pred = best_model.predict(X_test)
     test_acc = accuracy_score(y_test, y_pred)
     
-    print(f"\n   🧪 Test Set Accuracy: {round(test_acc * 100, 2)}%")
+    print(f"\n    Test Set Accuracy: {round(test_acc * 100, 2)}%")
     print("\n   [Classification Report]")
     print(classification_report(y_test, y_pred))
 

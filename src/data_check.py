@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def run_viva_report():
-    print("\n🏢 THE MASTER DATA POOL: FINAL ARCHITECTURE")
+    print("\n THE MASTER DATA POOL: FINAL ARCHITECTURE")
     print("-" * 65)
     
     # Paths to your combined files
@@ -34,7 +34,7 @@ def run_viva_report():
             report_data.append({'Set': name, 'Type': 'Human (Real)', 'Count': real})
             report_data.append({'Set': name, 'Type': 'Machine (AI)', 'Count': ai})
         else:
-            print(f"⚠️ Warning: {path} not found. Ensure main.py has run successfully!")
+            print(f" Warning: {path} not found. Ensure main.py has run successfully!")
 
     # Visualization block
     if report_data:
@@ -49,7 +49,7 @@ def run_viva_report():
         # Save as artifact for Day 9 portfolio [cite: 113, 114]
         if not os.path.exists('reports'): os.makedirs('reports')
         plt.savefig('reports/data_balance_check.png')
-        print(f"\n✅ Visual Insight saved to: reports/data_balance_check.png")
+        print(f"\n Visual Insight saved to: reports/data_balance_check.png")
         plt.show()
 
 if __name__ == "__main__":

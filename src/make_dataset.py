@@ -31,7 +31,7 @@ import os
 
 def check_data_foundation():
     """Checks if the data files are in place for the evaluator."""
-    print("📂 Checking Data Foundation (Day 1-2 Task)...")
+    print(" Checking Data Foundation (Day 1-2 Task)...")
     required_files = ['True.csv', 'Fake.csv', 'WELFake_Dataset.csv']
     
     for f in required_files:

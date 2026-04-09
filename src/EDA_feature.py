@@ -37,7 +37,7 @@ def get_advanced_features(text):
 
 def run_eda_analysis():
     print("\n" + "="*80)
-    print("📊 EXPLORATORY DATA ANALYSIS (EDA): FEATURE SEPARATION")
+    print(" EXPLORATORY DATA ANALYSIS (EDA): FEATURE SEPARATION")
     print("="*80)
 
     # 1. Load Data
@@ -45,7 +45,7 @@ def run_eda_analysis():
     try:
         df = pd.read_sql("SELECT * FROM training_dataset", conn)
     except:
-        print("❌ Error: Database not found.")
+        print(" Error: Database not found.")
         return
     conn.close()
 
@@ -84,7 +84,7 @@ def run_eda_analysis():
     
     if not os.path.exists('reports'): os.makedirs('reports')
     plt.savefig(OUTPUT_IMG_PATH)
-    print(f"   ✅ Saved EDA Chart to: {OUTPUT_IMG_PATH}")
+    print(f"    Saved EDA Chart to: {OUTPUT_IMG_PATH}")
     print("="*80 + "\n")
 
 if __name__ == "__main__":

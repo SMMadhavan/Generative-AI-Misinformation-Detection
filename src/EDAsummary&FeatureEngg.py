@@ -39,7 +39,7 @@ def get_advanced_features(text):
 
 def analyze_svm_weights():
     print("\n" + "="*80)
-    print("🧠 SVM COEFFICIENT ANALYSIS: WHAT THE MODEL 'THINKS'")
+    print(" SVM COEFFICIENT ANALYSIS: WHAT THE MODEL 'THINKS'")
     print("="*80)
 
     # 1. Load & Sample Data
@@ -103,7 +103,7 @@ def analyze_svm_weights():
     
     if not os.path.exists('reports'): os.makedirs('reports')
     plt.savefig(OUTPUT_IMG_PATH)
-    print(f"   ✅ Saved Coefficient Chart to: {OUTPUT_IMG_PATH}")
+    print(f"    Saved Coefficient Chart to: {OUTPUT_IMG_PATH}")
     print("="*80 + "\n")
 
 if __name__ == "__main__":
