@@ -65,10 +65,10 @@ def migrate_csv_to_db():
                 print(f"   [INFO] Data Shape: {df.shape}")
                 print("   [INFO] Inserting into SQLite Database...")
                 df[['text', 'label']].to_sql('training_dataset', conn, if_exists='append', index=False)
-                print(f"   ✅ SUCCESS: Migrated {len(df)} records.")
-            except Exception as e: print(f"   ❌ ERROR: {e}")
+                print(f" SUCCESS: Migrated {len(df)} records.")
+            except Exception as e: print(f" ERROR: {e}")
         else:
-            print(f"   ❌ ERROR: CSV Not Found at {CSV_SOURCE_PATH}")
+            print(f" ERROR: CSV Not Found at {CSV_SOURCE_PATH}")
     conn.close()
 
 def log_audit(text, domain, verdict, conf):
