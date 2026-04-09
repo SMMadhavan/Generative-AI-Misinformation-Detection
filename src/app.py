@@ -56,7 +56,7 @@ def migrate_csv_to_db():
     conn = init_db()
     if conn.execute("SELECT COUNT(*) FROM training_dataset").fetchone()[0] == 0:
         print("\n" + "="*60)
-        print("🗄️  DATABASE MIGRATION PROTOCOL (CSV -> SQL)")
+        print("DATABASE MIGRATION PROTOCOL (CSV -> SQL)")
         print("="*60)
         if os.path.exists(CSV_SOURCE_PATH):
             try:
