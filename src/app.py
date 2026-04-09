@@ -56,7 +56,7 @@ def migrate_csv_to_db():
     conn = init_db()
     if conn.execute("SELECT COUNT(*) FROM training_dataset").fetchone()[0] == 0:
         print("\n" + "="*60)
-        print("DATABASE MIGRATION PROTOCOL (CSV -> SQL)")
+        print("  DATABASE MIGRATION PROTOCOL (CSV -> SQL)")
         print("="*60)
         if os.path.exists(CSV_SOURCE_PATH):
             try:
@@ -65,10 +65,10 @@ def migrate_csv_to_db():
                 print(f"   [INFO] Data Shape: {df.shape}")
                 print("   [INFO] Inserting into SQLite Database...")
                 df[['text', 'label']].to_sql('training_dataset', conn, if_exists='append', index=False)
-                print(f" SUCCESS: Migrated {len(df)} records.")
-            except Exception as e: print(f" ERROR: {e}")
+                print(f"    SUCCESS: Migrated {len(df)} records.")
+            except Exception as e: print(f"    ERROR: {e}")
         else:
-            print(f" ERROR: CSV Not Found at {CSV_SOURCE_PATH}")
+            print(f"    ERROR: CSV Not Found at {CSV_SOURCE_PATH}")
     conn.close()
 
 def log_audit(text, domain, verdict, conf):
@@ -151,7 +151,7 @@ def extract_misinfo_triggers(text):
 # Training pipeline
 def train_and_evaluate():
     print("\n" + "="*80)
-    print("NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
+    print(" NEURAL AUDITOR: INITIALIZING DATA SCIENCE PIPELINE")
     print("="*80)
     
     #migrate_csv_to_db()
@@ -163,7 +163,7 @@ def train_and_evaluate():
     conn.close()
     
     if df.empty:
-        print("FATAL: No training data found.")
+        print(" FATAL: No training data found.")
         return
 
     print(f"   [DATA] Total Records Loaded: {len(df)}")
@@ -180,7 +180,7 @@ def train_and_evaluate():
     df['text'] = df['text'].astype(str)
     print(f"   [CLEANING] Data clean. (After: {len(df)})")
 
-    print("\n FEATURE ENGINEERING:")
+    print("\n  FEATURE ENGINEERING:")
     print("   - Extracting Linguistic DNA...")
     features_list = [get_advanced_features(t)[0] for t in df['text']]
     custom_features = np.array(features_list, dtype=np.float64)
@@ -236,7 +236,7 @@ def train_and_evaluate():
         except: auc = 0.0
         print(f"   {name:<25} | {round(acc*100, 2)}%      | {round(auc, 3):<10} | {round(end_time - start_time, 3)}s")
 
-    print("\n TRAINING FINAL ENSEMBLE (LinearSVC + Calibration)...")
+    print("\n  TRAINING FINAL ENSEMBLE (LinearSVC + Calibration)...")
     base_svm = LinearSVC(C=10, random_state=42, max_iter=3000)
     final_model = CalibratedClassifierCV(base_svm, cv=3)
     final_model.fit(X_train, y_train)
