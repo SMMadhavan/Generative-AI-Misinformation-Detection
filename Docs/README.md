@@ -1,4 +1,4 @@
-# 📂 Project Documentation & Assets
+#  Project Documentation & Assets
 
 Due to high-resolution assets (60MB+ Documentation and Video), the project deliverables are hosted on a secure Google Drive repository.
 
@@ -6,7 +6,7 @@ Due to high-resolution assets (60MB+ Documentation and Video), the project deliv
 
 ---
 
-### 📂 What is inside this Drive?
+###  What is inside this Drive?
 | File | Description |
 | :--- | :--- |
 | **📄 Project_Documentation.pdf** | The complete 54-page technical report and forensic analysis. |
