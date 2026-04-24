@@ -1,34 +1,34 @@
-# 🛡️ Neural Auditor: AI-Driven Misinformation Detection & Trend Analytics
+#  Neural Auditor: AI-Driven Misinformation Detection & Trend Analytics
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-2.0-green?style=for-the-badge&logo=flask)
 ![Scikit-Learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
 
-## 🚀 Project Overview
+##  Project Overview
 **Neural Auditor** is an enterprise-grade forensic tool designed to detect AI-generated misinformation and synthetic text patterns. By leveraging advanced Natural Language Processing (NLP) and a hybrid machine learning pipeline, the system analyzes "Linguistic DNA"—features like burstiness, perplexity, and semantic richness—to distinguish between human-written journalism and machine-generated hallucinations.
 
 Unlike simple classifiers, this project provides a **Forensic Dashboard** that offers real-time visualization, domain-specific sensitivity tuning (Politics, Healthcare, etc.), and automated PDF reporting for content moderation teams.
 
 ---
 
-## ⚡ Key Features
+##  Key Features
 
-### 🧠 **Forensic AI Analysis**
+###  **Forensic AI Analysis**
 * **Hybrid Detection Engine:** Combines TF-IDF vectorization with "Linguistic DNA" features (sentence complexity, buzzword density) to detect robotic writing patterns.
 * **Domain Context Awareness:** Adjusts sensitivity thresholds dynamically based on the topic (e.g., stricter rules for *Healthcare* vs. *Entertainment*).
 
-### 📊 **Interactive Dashboard**
+###  **Interactive Dashboard**
 * **Real-Time Visualization:** Radar charts displaying linguistic signatures (Uniformity vs. Richness).
 * **Live Threat Logs:** SQLite-backed audit trail of all scanned content.
 * **Visual Indicators:** Clear "Green/Yellow/Red" verdict system for Verified Human, Suspicious, or AI-Generated content.
 
-### 📑 **Automated Reporting**
+###  **Automated Reporting**
 * **PDF Generation:** One-click generation of professional forensic reports containing the analyzed text, verdict metadata, and confidence scores.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
@@ -42,7 +42,7 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 
 ---
 
-## ✅ Development Milestones
+##  Development Milestones
 
 ### **Phase 1: Data Engineering**
 * Successfully merged and cleaned a massive dataset of **117,493 rows** from ISOT, WELFake, and GenAI sources.
@@ -58,7 +58,7 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 
 ---
 
-## 💻 Installation & Setup
+##  Installation & Setup
 
 1.  **Clone the Repository**
     ```bash
@@ -105,11 +105,11 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 └── README.md               # Project documentation
 ```
 
-## 📌 Future Roadmap
+##  Future Roadmap
 
 * **N-gram Optimization:** Fine-tuning the vectorizer to catch multi-word AI phrases.
 * **Deep Learning Integration:** Exploring LSTM/BERT for deeper semantic analysis.
 * **API Deployment:** Dockerizing the Flask app for cloud deployment.
 
-## 📥 Project Deliverables 
+##  Project Deliverables 
 **[📂 CLICK HERE TO ACCESS PROJECT DOCUMENTATION & ASSETS](./Docs)**
