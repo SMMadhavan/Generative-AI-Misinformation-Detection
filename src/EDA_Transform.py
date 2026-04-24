@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 def visualize_feature_transformation():
-    print("📊 Visualizing Feature Transformation (The 'Funnel' Effect)...")
+    print(" Visualizing Feature Transformation (The 'Funnel' Effect)...")
 
     # 1. Define the Raw Features from each source
     # These represent the 'Before' state from your datasets [cite: 51]
