@@ -4,8 +4,9 @@ Flask
 # Core AI & Data 
 pandas
 numpy
-scikit-learn
 joblib
+sqlite3
+scikit-learn
 matplotlib
 
 # Reporting & Utils 
