@@ -91,7 +91,7 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 ## 📁 Repository Structure
 
 ```text
-├── Docs/                   # 📂Media Documentation 
+├── Docs/                   # Media Documentation 
 ├── data/
 │   └── processed/          # Master cleaned dataset (CSV)
 ├── models/                 # Pre-trained .joblib models & vectorizers
@@ -112,4 +112,4 @@ Unlike simple classifiers, this project provides a **Forensic Dashboard** that o
 * **API Deployment:** Dockerizing the Flask app for cloud deployment.
 
 ##  Project Deliverables 
-**[📂 CLICK HERE TO ACCESS PROJECT DOCUMENTATION & ASSETS](./Docs)**
+**[CLICK HERE TO ACCESS PROJECT DOCUMENTATION & ASSETS](./Docs)**
